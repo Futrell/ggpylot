@@ -11,12 +11,13 @@ Known issues:
 * ggplot has to be the first function in the chain.
 * facet_grid doesn't work (but facet_wrap does).
 
-
 """
 # TODO
 # Figure out facet_grid problems: How to represent formulae?
 #   1. 'cyl' not found
 #   2. weird closure thing.
+#   3. how to do the facet argument of qplot?
+# Does qplot work? 
 # Figure out how to call dev_off() automatically to avoid segfaults.
 # Fix order-dependence
 # Documentation for patched functions
@@ -157,12 +158,11 @@ _inject_ggplot_functions(ggplot2)
 
 # aes_string doesn't seem to accept positional arguments. I don't know why. 
 # Here is an ad-hoc solution:
-_old_aes_string = aes_string
 def aes_string(x, y=None, **kwds): 
     if y is None:
-        return _old_aes_string(x=x, **kwds)
+        return ggplot2.aes_string(x=x, **kwds)
     else:
-        return _old_aes_string(x=x, y=y, **kwds)
+        return ggplot2.aes_string(x=x, y=y, **kwds)
 
 # aes by itself is basically unusable in Python. Also, yhat's ggplot thing 
 # uses aes with the interface of aes_string. So let's just do this:
@@ -172,4 +172,16 @@ aes = aes_string
 # you have to call grdevices.dev_off(). This is a pain to type and easy to 
 # forget, so to make it easier I just make dev_off() available in the module.
 dev_off = grdevices.dev_off
+
+# facet_grid in R uses formulas, which have no equivalent in Python. So I'll
+# adopt the yhat's syntax: the first two arguments to facet_grid are x and y
+# corresponding to the formula x ~ y. However unlike yhat's facet_grid, this
+# one should be able to take all the arguments that R's does. 
+def facet_grid(x=None, y=None, **kwds):
+    # ok, we'll have to actually build the R formula
+    formula = robjects.Formula("{x} ~ {y}".format(x='.' if x is None else x,
+                                                  y='.' if y is None else y))
+    return ggplot2.facet_grid(formula, **kwds)
+
+
 
