@@ -13,15 +13,11 @@ Known issues:
 
 """
 # TODO
-# Figure out facet_grid problems: How to represent formulae?
-#   1. 'cyl' not found
-#   2. weird closure thing.
-#   3. how to do the facet argument of qplot?
 # Does qplot work? 
 # Figure out how to call dev_off() automatically to avoid segfaults.
 # Fix order-dependence
 # Documentation for patched functions
-
+from collections import Sequence
 import tempfile
 
 from rpy2 import robjects
@@ -174,14 +170,51 @@ aes = aes_string
 dev_off = grdevices.dev_off
 
 # facet_grid in R uses formulas, which have no equivalent in Python. So I'll
-# adopt the yhat's syntax: the first two arguments to facet_grid are x and y
+# adopt yhat's syntax: the first two arguments to facet_grid are x and y
 # corresponding to the formula x ~ y. However unlike yhat's facet_grid, this
-# one should be able to take all the arguments that R's does. 
+# one should be able to take all the arguments that R's does. Alternatively,
+# you can pass in a string containing ~ and that will be interpreted as a
+# formula directly. 
 def facet_grid(x=None, y=None, **kwds):
-    # ok, we'll have to actually build the R formula
-    formula = robjects.Formula("{x} ~ {y}".format(x='.' if x is None else x,
-                                                  y='.' if y is None else y))
+    """ facet grid
+
+    Two ways to call this:
+    1. R style: The first argument is a string containing the formula. In this
+        case, the second positional argument is ignored. 
+    2. yhat style: The first two arguments are strings to be substituted in as
+        x and y in the formula x~y.
+
+    """
+    if '~' in x:
+        formula = robjects.Formula(x)
+    else:
+        x = '.' if x is None else x
+        y = '.' if y is None else y
+        formula = robjects.Formula("{x} ~ {y}".format(x=x, y=y))
+
     return ggplot2.facet_grid(formula, **kwds)
 
-
-
+# DOESN'T WORK YET!
+def qplot(x, y=None, **kwds):
+    if 'facet_grid' in kwds:
+        formula_spec = kwds['facet_grid']
+        if isinstance(formula_spec, str) and '~' in formula_spec:
+            formula = robjects.Formula(formula_spec)
+        elif len(formula_spec) == 2:
+            if isinstance(formula_spec, Sequence):
+                x, y = formula_spec
+            elif isinstance(formula_spec, dict):
+                x = formula_spec['x']
+                y = formula_spec['y']
+            else:
+                raise Exception("Invalid formula passed to facet_grid.")
+            x = '.' if x is None else x
+            y = '.' if y is None else y
+            formula = robjects.Formula("{x} ~ {y}".format(x=x, y=y))
+        else:
+            raise Exception("Invalid formula passed to facet_grid.")
+        kwds['facet_grid'] = formula
+    if y is None:
+        return ggplot2.qplot(x, **kwds)
+    else:
+        return ggplot2.qplot(x, y=y, **kwds)

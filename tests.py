@@ -54,5 +54,30 @@ p.plot()
 dev_off()
 
 
+p = ggplot(diamonds, aes(x='price'))
+x = p + geom_density() + facet_grid("cut", "clarity")
+x.plot()
+dev_off()
+
+p = ggplot(aes(x='wt', y='mpg'), data=mtcars)
+x = p + geom_point() + facet_grid('cyl', 'gear', scales='free_y')
+x.plot()
+dev_off()
+
+p = ggplot(mtcars, aes('mpg', 'wt', colour='factor(cyl)')) + geom_point()
+p.plot()
+dev_off()
+
+x = p + facet_grid(None, 'cyl', scales='free')
+x.plot()
+dev_off()
+
+x = p + facet_grid(y='cyl', scales='free')
+x.plot()
+dev_off()
+
+
+
+
 
 print("OK")
