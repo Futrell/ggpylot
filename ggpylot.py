@@ -1,9 +1,23 @@
-""" ggpylot: Python interface to ggplot2 via rpy2. """
+""" ggpylot: Python interface to ggplot2 via rpy2. 
+
+Example:
+
+p = ggplot(mtcars, aes('mpg', 'qsec')) + geom_point(colour='steelblue')
+p.plot() # a beautiful plot appears
+dev_off() # YOU MUST CLOSE THE PLOT WINDOW THIS WAY! Or else!!!
+
+Known issues:
+* if you close the plot without calling dev_off(), you'll get a segfault (!).
+* ggplot has to be the first function in the chain.
+* facet_grid doesn't work (but facet_wrap does).
+
+
+"""
 # TODO
-# Figure out facet_grid problems
+# Figure out facet_grid problems: How to represent formulae?
 #   1. 'cyl' not found
 #   2. weird closure thing.
-# Figure out source of segfaults. Patch.
+# Figure out how to call dev_off() automatically to avoid segfaults.
 # Fix order-dependence
 # Documentation for patched functions
 
@@ -65,10 +79,10 @@ robjects.conversion.ri2py = _ggplot2_conversion
 ###########################################################
 
 class GGPlot(robjects.RObject):
-    """ A Grammar of Graphics Plot.
+    """ A Grammar of Graphics Plot
     
     GGPlot instances can be added to one an other in order to construct
-    the final plot (the method `__add__()` is implemented).
+    the final plot. Call the plot() method to see the plot. 
 
     """
     _rprint = ggplot2._env['print.ggplot']
