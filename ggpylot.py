@@ -13,7 +13,7 @@ Known issues:
 
 """
 # TODO
-# Does qplot work? 
+# Fix qplot!
 # Figure out how to call dev_off() automatically to avoid segfaults.
 # Fix order-dependence
 # Documentation for patched functions
@@ -78,8 +78,9 @@ robjects.conversion.ri2py = _ggplot2_conversion
 class GGPlot(robjects.RObject):
     """ A Grammar of Graphics Plot
     
-    GGPlot instances can be added to one an other in order to construct
-    the final plot. Call the plot() method to see the plot. 
+    GGPlot instances can be added to one an other in order to construct the 
+    final plot. Call the plot() method of the resulting object to see the 
+    plot. 
 
     """
     _rprint = ggplot2._env['print.ggplot']
@@ -185,7 +186,7 @@ def facet_grid(x=None, y=None, **kwds):
         x and y in the formula x~y.
 
     """
-    if '~' in x:
+    if isinstance(x, str) and '~' in x:
         formula = robjects.Formula(x)
     else:
         x = '.' if x is None else x
@@ -194,7 +195,7 @@ def facet_grid(x=None, y=None, **kwds):
 
     return ggplot2.facet_grid(formula, **kwds)
 
-# DOESN'T WORK YET!
+# DOESN'T WORK YET! WHY!??!!
 def qplot(x, y=None, **kwds):
     if 'facet_grid' in kwds:
         formula_spec = kwds['facet_grid']
@@ -214,7 +215,4 @@ def qplot(x, y=None, **kwds):
         else:
             raise Exception("Invalid formula passed to facet_grid.")
         kwds['facet_grid'] = formula
-    if y is None:
-        return ggplot2.qplot(x, **kwds)
-    else:
-        return ggplot2.qplot(x, y=y, **kwds)
+    raise NotImplementedError

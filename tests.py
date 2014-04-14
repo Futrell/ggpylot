@@ -7,7 +7,7 @@ from ggpylot import *
 
 p = ggplot(mtcars, aes('mpg', 'qsec')) + geom_point(colour='steelblue') \
   + scale_x_continuous(breaks=[10,20,30], 
-  	labels=["horrible", "ok", "awesome"])
+  					   labels=["horrible", "ok", "awesome"])
 p.plot()
 dev_off()
 
@@ -22,7 +22,8 @@ x = p + geom_histogram() + facet_wrap("cut")
 x.plot()
 dev_off()
 
-p = ggplot(aes(x='date', y='beef'), data=meat) + geom_line() + theme_bw() + stat_smooth()
+p = ggplot(aes(x='date', y='beef'), data=meat) + geom_line() + theme_bw() \
+	+ stat_smooth()
 p.plot()
 dev_off()
 
@@ -47,8 +48,7 @@ random_walk2 = pd.DataFrame({
   "x": np.arange(100),
   "y": np.cumsum(np.random.choice([-1, 1], 100))
 })
-p = ggplot(aes(x='x', y='y'), data=random_walk1) + \
-    geom_step() + \
+p = ggplot(aes(x='x', y='y'), data=random_walk1) + geom_step() + \
     geom_step(aes(x='x', y='y'), data=random_walk2)
 p.plot()
 dev_off()
@@ -56,6 +56,11 @@ dev_off()
 
 p = ggplot(diamonds, aes(x='price'))
 x = p + geom_density() + facet_grid("cut", "clarity")
+x.plot()
+dev_off()
+
+p = ggplot(diamonds, aes(x='price'))
+x = p + geom_density() + facet_grid("cut ~ clarity")
 x.plot()
 dev_off()
 
@@ -72,12 +77,17 @@ x = p + facet_grid(None, 'cyl', scales='free')
 x.plot()
 dev_off()
 
-x = p + facet_grid(y='cyl', scales='free')
+x = p + facet_grid('. ~ cyl', scales='free')
 x.plot()
 dev_off()
 
+x = p + facet_grid(y='cyl', scales='free') 
+x.plot()
+dev_off()
 
-
+x = p + facet_grid('cyl', scales='free') + stat_smooth()
+x.plot()
+dev_off()
 
 
 print("OK")
