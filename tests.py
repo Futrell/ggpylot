@@ -89,5 +89,8 @@ x = p + facet_grid('cyl', scales='free') + stat_smooth()
 x.plot()
 dev_off()
 
+p = ggplot(diamonds, aes('clarity', fill='clarity')) + geom_bar(width=1) + coord_polar(theta='x')
+p.plot()
+dev_off()
 
 print("OK")
