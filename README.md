@@ -3,6 +3,14 @@ ggpylot
 
 ggplot2 interface in Python via rpy2
 
+Requirements
+------------
+
+* You need to have the latest version of `R` installed and the `ggplot2`
+package installed in R.
+* `pandas`
+* The latest `rpy2`
+
 
 Goals
 -----

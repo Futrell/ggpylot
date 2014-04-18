@@ -114,7 +114,7 @@ class GGPlot(robjects.RObject):
            res = data.read()
         return res
 
-    def _repr_svg_(self, width=6, height=4): 
+    def __repr_svg_(self, width=6, height=4): 
         # Hack with a temp file (use buffer later?)
         fn = tempfile.NamedTemporaryFile(mode='wb', suffix='.svg',
                                          delete=False)
