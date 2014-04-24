@@ -17,13 +17,15 @@ from ggpylot import *
 p = ggplot(mtcars, aes(x='mpg', y='qsec', colour='factor(cyl)')) + geom_point()
 p.plot()
 ```
-(PLOT HERE)
+![Example plot](http://web.mit.edu/futrell/www/example.svg)
 
-**To close the window, you must do this:**
+**To close the plot window, you must do this:**
 ```python
 dev_off()
 ```
 Or else bad things will happen! (I'm working on fixing this.)
+
+You can see a variety of other examples in the file ``tests.py``. 
 
 Installation
 ------------
