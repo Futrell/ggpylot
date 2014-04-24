@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-from ggplot import mtcars, diamonds, meat
 
 from ggpylot import *
 
@@ -90,6 +89,11 @@ x.plot()
 dev_off()
 
 p = ggplot(diamonds, aes('clarity', fill='clarity')) + geom_bar(width=1) + coord_polar(theta='x')
+p.plot()
+dev_off()
+
+meat_lng = pd.melt(meat[['date', 'beef', 'broilers', 'pork']], id_vars=['date'])
+p = ggplot(aes(x='value', colour='variable', fill='variable'), data=meat_lng) + geom_density(alpha=.3)
 p.plot()
 dev_off()
 

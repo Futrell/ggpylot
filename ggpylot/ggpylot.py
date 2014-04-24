@@ -9,11 +9,9 @@ dev_off() # YOU MUST CLOSE THE PLOT WINDOW THIS WAY! Or else!!!
 Known issues:
 * if you close the plot without calling dev_off(), you'll get a segfault (!).
 * ggplot has to be the first function in the chain.
-* facet_grid doesn't work (but facet_wrap does).
 
 """
 # TODO
-# BUG: '' as first argument to aes (needed for pie charts)
 # Fix qplot!
 # Figure out how to call dev_off() automatically to avoid segfaults.
 # Fix order-dependence
@@ -22,121 +20,9 @@ from __future__ import print_function
 from collections import Sequence
 import tempfile
 
-from rpy2 import robjects
-from rpy2.robjects import pandas2ri
-
-grdevices = robjects.packages.importr('grDevices')
-ggplot2 = robjects.packages.importr('ggplot2')
-
-
-###########################################################
-#####                 CONVERSIONS                     #####
-###########################################################
-
-pandas2ri.activate()
-
-_old_py2ri_with_pandas_activated = robjects.conversion.py2ri
-
-def _sequence_to_r_vector(lst, c=robjects.r['c']):
-    return c(*lst)
-
-_py2ri_conversions = {
-    list : _sequence_to_r_vector,
-    tuple : _sequence_to_r_vector,
-    }
-
-def _my_py2ri(pyobj):
-    convert_fn = _py2ri_conversions.get(type(pyobj))
-    if convert_fn is not None:
-        return convert_fn(pyobj)
-    else:
-        return _old_py2ri_with_pandas_activated(pyobj)
-
-robjects.conversion.py2ri = _my_py2ri    
-
-
-_old_ri2py = robjects.conversion.ri2py
-
-def _ggplot2_conversion(robj):
-
-    pyobj = _old_ri2py(robj)
-
-    rcls = pyobj.rclass
-    if rcls is robjects.NULL:
-       rcls = (None, )
-
-    if 'gg' in rcls:
-       pyobj = GGPlot(pyobj)
-
-    return pyobj
-
-robjects.conversion.ri2py = _ggplot2_conversion    
-
-
-###########################################################
-#####                GGPLOT OBJECT                    #####
-###########################################################
-
-class GGPlot(robjects.RObject):
-    """ A Grammar of Graphics Plot
-    
-    GGPlot instances can be added to one an other in order to construct the 
-    final plot. Call the plot() method of the resulting object to see the 
-    plot. 
-
-    """
-    _rprint = ggplot2._env['print.ggplot']
-    _add = ggplot2._env['%+%']
-    
-    def plot(self, vp=robjects.constants.NULL):
-        self._rprint(self, vp=vp)
-
-    def __add__(self, obj):
-        res = self._add(self, obj)
-        if res.rclass[0] != 'gg':
-            raise ValueError("Added object did not give a ggplot result "
-                            + "(get class '%s')." % res.rclass[0])
-        return self.__class__(res)
-
-    def __radd__(self, obj):
-        return self.__add__(obj)
-
-    def _repr_png_(self, width=700, height=500): 
-        # Hack with a temp file (use buffer later?)
-        fn = tempfile.NamedTemporaryFile(mode='wb', suffix='.png', 
-                                         delete=False)
-        fn.close()
-        grdevices.png(fn.name, width=width, height=height)
-        self.plot()
-        grdevices.dev_off()
-        import io
-        with io.OpenWrapper(fn.name, mode='rb') as data:
-           res = data.read()
-        return res
-
-    def __repr_svg_(self, width=6, height=4): 
-        # Hack with a temp file (use buffer later?)
-        fn = tempfile.NamedTemporaryFile(mode='wb', suffix='.svg',
-                                         delete=False)
-        fn.close()
-        grdevices.svg(fn.name, width=width, height=height)
-        self.plot()
-        grdevices.dev_off()
-        import io
-        with io.OpenWrapper(fn.name, mode='rb') as data:
-           res = data.read().decode('utf-8') # really?
-        return res
-
-    # svg images in IPython notebooks interfere with one another. So I'm 
-    # making this a private method for now. 
-    def _svg(width=6, height=4, self=plot):
-        """ Build an Ipython "Image" (requires iPython). """
-        return Image(self._repr_svg_(width=width, height=height), embed=True)
-
-    def png(width=700, height=500, self=plot):
-        """ Build an Ipython "Image" (requires iPython). """
-        return Image(self._repr_png_(width=width, height=height), embed=True)
-
+from rpy2interface import robjects, grdevices, ggplot2
+import conversions
+conversions.activate()
 
 ###########################################################
 #####         FROM THE R PACKAGE IMPORT *             #####
@@ -195,7 +81,6 @@ def facet_grid(x=None, y=None, **kwds):
         x and y in the formula x~y.
 
     """
-
     if isinstance(x, str) and '~' in x: 
         formula = robjects.Formula(x) # formula passed as string
         if y is not None:
@@ -239,3 +124,7 @@ def qplot(x, y=None, **kwds):
         kwds['facet_grid'] = facet_formula(kwds['facet_grid'])
         
     raise NotImplementedError
+
+
+
+
