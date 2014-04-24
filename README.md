@@ -6,11 +6,28 @@ ggplot2 interface in Python via rpy2
 Requirements
 ------------
 
-* You need to have the latest version of `R` installed and the `ggplot2`
-package installed in R.
+* You need to have the latest version of `R` installed and the `ggplot2` package installed inside R.
 * `pandas`
 * The latest `rpy2`
 
+Example
+-------
+```python
+p = ggplot(mtcars, aes(x='mpg', y='qsec', colour='factor(cyl)')) + geom_point()
+p.plot()
+```
+(PLOT HERE)
+**You must close the plot window by calling:**
+```python
+dev_off()
+```
+
+Installation
+------------
+```
+python setup.py build
+python setup.py install
+```
 
 Goals
 -----
