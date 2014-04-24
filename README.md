@@ -34,16 +34,12 @@ python setup.py build
 python setup.py install
 ```
 
-Goals
+Features
 -----
 
-1. I want to be able to use R's `ggplot2` package from Python without making the user explicitly deal with R. 
-2. The Python interface should be very similar to the underlying R interface
-and to the interface in the yhat `ggplot` project.
-3. To the greatest extent possible, automatic compability with updated 
-versions of `ggplot2`. 
-4. It should work in IPython notebooks.
-
+1. Lets you use R's `ggplot2` package from Python without explicitly dealing with R. All ``ggplot2`` functionality should be available.
+2. The Python interface is very similar to the underlying R interface and to the interface in the yhat `ggplot` project.
+3. It works in IPython notebooks.
 
 
 Previous projects along these lines
@@ -51,11 +47,11 @@ Previous projects along these lines
 
 I will be building on these things.
 
-1. `rpy2`'s interface to `ggplot2`
+1. [`rpy2`'s interface to `ggplot2`](http://rpy.sourceforge.net/rpy2.html)
 
 The `rpy2` interface to `ggplot2` attempts to align the universe of R ggplot objects with Python objects connected to underlying R objects. This is a good idea but it is hard to keep it up to date as the underlying R package changes. For instance, the interface of `rpy2`'s `ggplot2` is already out of date. 
 
-2. Yhat's `ggplot` module
+2. [Yhat's `ggplot` module](https://github.com/yhat/ggplot/)
 
 This is an attempt to recreate ggplot on the basis of `matplotlib`. This is an
 admirable project: it is probably the way to go in the long run. But right now the python `ggplot` lacks some of the functionality of R's `ggplot2`, and I find the defaults in the python `ggplot` to not be as good as the defaults in R. I do think that is the way of the future though, so I'm going to try to make the interface here compatible with the yhat `ggplot` package.
