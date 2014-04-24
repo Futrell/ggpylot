@@ -13,14 +13,17 @@ Requirements
 Example
 -------
 ```python
+from ggpylot import *
 p = ggplot(mtcars, aes(x='mpg', y='qsec', colour='factor(cyl)')) + geom_point()
 p.plot()
 ```
 (PLOT HERE)
-**You must close the plot window by calling:**
+
+**To close the window, you must do this:**
 ```python
 dev_off()
 ```
+Or else bad things will happen! (I'm working on fixing this.)
 
 Installation
 ------------
