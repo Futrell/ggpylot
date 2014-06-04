@@ -8,7 +8,7 @@ Requirements
 
 * You need to have the latest version of `R` installed and the `ggplot2` package installed inside R.
 * `pandas`
-* The latest `rpy2`
+* `rpy2` >= 2.4.0
 
 Example
 -------
@@ -26,13 +26,6 @@ dev_off()
 Or else bad things will happen! (I'm working on fixing this.)
 
 You can see a variety of other examples in the file ``tests.py``. 
-
-Installation
-------------
-```
-python setup.py build
-python setup.py install
-```
 
 Features
 -----
@@ -61,3 +54,12 @@ The Approach Here
 -----------------
 
 All we need is a thin layer over R's `ggplot2` library as imported with `rpy2`'s `importr` function, and some ad-hoc fixes for weird stuff that arises. We also need some customized object conversion. Shouldn't be hard, right?
+
+
+Installation
+------------
+```
+python setup.py build
+python setup.py install
+```
+
