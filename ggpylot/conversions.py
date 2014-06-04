@@ -28,23 +28,26 @@ def activate_py2ri():
 
     robjects.conversion.py2ri = my_py2ri
 
-def activate_ri2py():
-    old_ri2py = robjects.conversion.ri2py
+def activate_ri2ro():
+    old_ri2ro = robjects.conversion.ri2ro
 
     def ggplot2_conversion(robj):
-        pyobj = old_ri2py(robj)
-        rcls = pyobj.rclass
-        if rcls is robjects.NULL:
-            rcls = (None,)
-        if 'gg' in rcls:
+        pyobj = old_ri2ro(robj)
+
+        try:
+            rcls = pyobj.rclass
+        except AttributeError:
+            return pyobj
+        
+        if rcls is not None and 'gg' in rcls:
             pyobj = GGPlot(pyobj)
         return pyobj
 
-    robjects.conversion.ri2py = ggplot2_conversion
+    robjects.conversion.ri2ro = ggplot2_conversion
 
 def activate():
     activate_py2ri()
-    activate_ri2py()
+    activate_ri2ro()
 
 ###########################################################
 #####                GGPLOT OBJECT                    #####
