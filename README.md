@@ -6,9 +6,9 @@ ggplot2 interface in Python via rpy2
 Requirements
 ------------
 
-* You need to have the latest version of `R` installed and the `ggplot2` package installed inside R.
+* You need to have `R` installed and the `ggplot2` package installed inside R.
 * `pandas`
-* `rpy2` >= 2.4.0
+* `rpy2` >= 2.4.0 (tested on 2.4.4)
 
 Example
 -------
