@@ -5,7 +5,7 @@
 # The conversions here have to be activated by calling activate().
 #
 import tempfile
-from rpy2interface import robjects, ggplot2, pandas2ri, grdevices
+from .rpy2interface import robjects, ggplot2, pandas2ri, grdevices
 
 def sequence_to_r_vector(lst, c=robjects.r['c']):
     return c(*lst)
@@ -91,7 +91,7 @@ class GGPlot(robjects.RObject):
            res = data.read()
         return res
 
-    def __repr_svg_(self, width=6, height=4):
+    def _repr_svg_(self, width=6, height=4):
         # Hack with a temp file (use buffer later?)
         fn = tempfile.NamedTemporaryFile(mode='wb', suffix='.svg',
                                          delete=False)
@@ -106,7 +106,7 @@ class GGPlot(robjects.RObject):
 
     # svg images in IPython notebooks interfere with one another. So I'm
     # making this a private method for now.
-    def _svg(width=6, height=4, self=plot):
+    def svg(width=6, height=4, self=plot):
         """ Build an Ipython "Image" (requires iPython). """
         return Image(self._repr_svg_(width=width, height=height), embed=True)
 

@@ -20,9 +20,9 @@ from __future__ import print_function
 from collections import Sequence
 import tempfile
 
-from rpy2interface import robjects, grdevices, ggplot2
-import conversions
-conversions.activate()
+from .rpy2interface import robjects, grdevices, ggplot2
+from .conversions import activate
+activate()
 
 ###########################################################
 #####         FROM THE R PACKAGE IMPORT *             #####
@@ -32,7 +32,7 @@ def _inject_into_module_namespace(key, value):
     globals()[key] = value
 
 def _inject_ggplot_functions(ggplot_package):
-    for key, value in ggplot_package.__dict__.iteritems():
+    for key, value in ggplot_package.__dict__.items():
         if isinstance(value, robjects.functions.SignatureTranslatedFunction):
             _inject_into_module_namespace(key, value)
 
